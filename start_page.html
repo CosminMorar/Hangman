@@ -11,11 +11,29 @@
   <body>
     <label for="inputSolution" class="form-label">Enter the words to be guessed</label>
     <input type="password" id="inputSolution" class="form-control" aria-describedby="passwordHelpBlock">
-    <button type="button" class="btn btn-primary" onclick="loadPage('play.html')">Start</button>
+    <button type="button" class="btn btn-primary" onclick="validatePassword()">Start</button>
+    <div id="invalidPasswordPlace"></div>
 
     <script type="text/javascript">
-      function loadPage(href) {
+      function validatePassword() {
         var password = document.getElementById('inputSolution').value;
+        for (var i = 0; i < password.length; i++) {
+          var c = password[i];
+          if (!('a' <= c && c <= 'z')) {
+            var place = document.getElementById('invalidPasswordPlace');
+            if (c == ' ') {
+              place.innerHTML = 'The words you introduced are invalid! Try not to use spaces.';
+            } else if ('A' <= c && c <= 'Z') {
+              place.innerHTML = 'The words you introduced are invalid! Try not to use uppercase letters.';
+            } else {
+              place.innerHTML = 'The words you introduced are invalid! Try not to use "' + c + '".';
+            }
+            return;
+          }
+        }
+        loadPage('play.html', password);
+      }
+      function loadPage(href, password) {
         window.location.href = href + '?' + password;
       }
     </script>
