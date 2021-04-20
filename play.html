@@ -15,10 +15,22 @@
     <div id="lettersPlace">Display the letters</div>
 
     <div id="passwordDisplayer">The password is: </div>
-    
+
+
+    <button type="button" name="button" onclick="makeMistake()">Make Mistake</button>
+
     <script type="text/javascript">
       var password;
       var triesLeft;
+
+      function makeMistake() {
+        triesLeft--;
+        if (triesLeft == 0) {
+          loadPage('lost.html');
+        } else {
+          loadHangmanImage();
+        }
+      }
 
       function loadHangmanImage() {
         var place = document.getElementById('imagePlace');
@@ -32,7 +44,7 @@
 
       function setEnvironment() {
         triesLeft = 11;
-        loadHangmanImage(triesLeft);
+        loadHangmanImage();
       }
 
       function loadPage(href) {
