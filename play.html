@@ -5,23 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
-
+    <link rel="stylesheet" href="style.css">
     <title>Hangman by Cosmin</title>
   </head>
   <body onload="extractParameters(); setEnvironment()">
     <button type="button" name="button" onclick="loadPage('start_page.html')">Restart</button>
 
-    <div id="imagePlace">Display the hangman state</div>
-    <div id="lettersPlace">Display the letters</div>
+    <div id="passwordDisplayer">dda</div>
+    <div id="imageDisplayer"></div>
+    <div id="guessOptionsDisplayer"></div>
 
-    <div id="passwordDisplayer">The password is: </div>
-
-
-    <button type="button" name="button" onclick="makeMistake()">Make Mistake</button>
 
     <script type="text/javascript">
       var password;
       var triesLeft;
+      var guessed;
 
       function makeMistake() {
         triesLeft--;
@@ -32,8 +30,26 @@
         }
       }
 
+      function makeGuess(id) {
+        if (!guessed[id]) {
+          var c = String.fromCharCode('a'.charCodeAt(0) + id);
+          for (var i = 0; i < password.length; i++) {
+            if (password[i] == c) {
+              guessed[id] = true;
+            }
+          }
+          if (guessed[id]) {
+            document.getElementById('GuessOptionBtn' + id).style.background = 'green';
+            loadPassword();
+          } else {
+            document.getElementById('GuessOptionBtn' + id).style.background = 'red';
+            makeMistake();
+          }
+        }
+      }
+
       function loadHangmanImage() {
-        var place = document.getElementById('imagePlace');
+        var place = document.getElementById('imageDisplayer');
         var mistakes = 11 - triesLeft;
         if (0 <= mistakes && mistakes <= 11) {
           place.innerHTML = '<img src="Hangman Photos/Drawing (' + mistakes + ').png" alt="File not found">';
@@ -42,9 +58,42 @@
         }
       }
 
+      function loadPassword() {
+        $("#passwordDisplayer").html('');
+        var gameNotFinished = false;
+        for (var i = 0; i < password.length; i++) {
+          var c = password[i];
+          if (guessed[c.charCodeAt(0) - 'a'.charCodeAt(0)]) {
+            $("#passwordDisplayer").html($("#passwordDisplayer").html() + '' + c);
+          } else {
+            $("#passwordDisplayer").html($("#passwordDisplayer").html() + '_');
+            gameNotFinished = true;
+          }
+          $("#passwordDisplayer").html($("#passwordDisplayer").html() + ' ');
+        }
+        if (!gameNotFinished) {
+          loadPage('won.html');
+        }
+      }
+
+      function loadGuessOptions() {
+        for (var i = 0; i < 26; i++) {
+          var c = String.fromCharCode('a'.charCodeAt(0) + i);
+          $("#guessOptionsDisplayer").append(
+            '<button type="button" name="button" class="GuessOptionBtn" id="GuessOptionBtn' + i + '" onClick="makeGuess(' + i + ')">' + c + '</button>'
+          );
+        }
+      }
+
       function setEnvironment() {
         triesLeft = 11;
         loadHangmanImage();
+        guessed = [26];
+        for (var i = 0; i < 26; i++) {
+          guessed[i] = false;
+        }
+        loadPassword();
+        loadGuessOptions();
       }
 
       function loadPage(href) {
@@ -55,9 +104,9 @@
         /// Extracting the password
         var queryString = decodeURIComponent(window.location.search);
         password = queryString.substring(1);
-        document.getElementById('passwordDisplayer').innerHTML += password;
       }
     </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
   </body>
 </html>
