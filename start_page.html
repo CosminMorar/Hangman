@@ -5,38 +5,93 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <link rel="stylesheet" href="start_page_style.css">
 
-    <title>Wellcome to Hangman!</title>
+    <title> Wellcome to Myu</title>
   </head>
-  <body>
-    <label for="inputSolution" class="form-label">Enter the words to be guessed</label>
-    <input type="password" id="inputSolution" class="form-control" aria-describedby="passwordHelpBlock">
-    <button type="button" class="btn btn-primary" onclick="validatePassword()">Start</button>
-    <div id="invalidPasswordPlace"></div>
+  <body onload="setEnvironment()">
+    <div class="scoreDisplayer">
+      <div id="ScorePlayer1Displayer" class="scorePlayer1Displayer"></div>
+      <div id="scorePlayer2Displayer" class="scorePlayer2Displayer"></div>
+    </div>
+    <div class="form">
+      <div class="formDisplayer">
+        <div id="setterPlayerDisplayer"></div><br>
+        <br>
+        <label for="inputSolution" class="form-label"><h4>Enter the words to be guessed</h4></label>
+        <input type="password" id="inputSolution" class="form-control" aria-describedby="passwordHelpBlock">
+        <br>
+        <button type="button" class="btn btn-primary" onclick="loadPage('play.html')">Start</button>
+        <br>
+        <br>
+        <div id="invalidPasswordPlace"></div>
+      </div>
+    </div>
 
     <script type="text/javascript">
-      function validatePassword() {
+      function displaySetter() {
+        var storage = window.sessionStorage;
+        document.getElementById('setterPlayerDisplayer').innerHTML = '<h1>Player' + storage.getItem('setterPlayer') + ' is setting the word!</h1>';
+      }
+
+      function displayScore() {
+        var storage = window.sessionStorage;
+        document.getElementById('ScorePlayer1Displayer').innerHTML = 'Player1: ' + storage.getItem('player1Score');
+        document.getElementById('scorePlayer2Displayer').innerHTML = 'Player2: ' + storage.getItem('player2Score');
+      }
+
+      function setEnvironment() {
+        var storage = window.sessionStorage;
+        var player1Score = storage.getItem('player1Score') == null ? 0 : storage.getItem('player1Score');
+        var player2Score = storage.getItem('player2Score') == null ? 0 : storage.getItem('player2Score');
+        storage.setItem('player1Score', player1Score);
+        storage.setItem('player2Score', player2Score);
+
+        var setterPlayer = storage.getItem('setterPlayer') == null ? 1 : (storage.getItem('setterPlayer') == 1 ? 2 : 1);
+        var guesserPlayer = setterPlayer == 1 ? 2 : 1;
+        storage.setItem('setterPlayer', setterPlayer);
+        storage.setItem('guesserPlayer', guesserPlayer);
+
+        displayScore();
+        displaySetter();
+      }
+
+      function passwordIsValid() {
         var password = document.getElementById('inputSolution').value;
+        if (password.length == 0) {
+          document.getElementById('invalidPasswordPlace').innerHTML = 'You have to type something. Obviously...';
+          return false;
+        }
         for (var i = 0; i < password.length; i++) {
           var c = password[i];
           if (!('a' <= c && c <= 'z')) {
             var place = document.getElementById('invalidPasswordPlace');
             if (c == ' ') {
               place.innerHTML = 'The words you introduced are invalid! Try not to use spaces.';
+              return false;
             } else if ('A' <= c && c <= 'Z') {
               place.innerHTML = 'The words you introduced are invalid! Try not to use uppercase letters.';
+              return false;
             } else {
               place.innerHTML = 'The words you introduced are invalid! Try not to use "' + c + '".';
+              return false;
             }
-            return;
           }
         }
-        loadPage('play.html', password);
+        return true;
       }
-      function loadPage(href, password) {
-        window.location.href = href + '?' + password;
+
+      function loadPage(href) {
+        if (passwordIsValid()) {
+          /// save data in the DB
+          var storage = window.sessionStorage;
+          storage.setItem('password', document.getElementById('inputSolution').value);
+          /// load the new page
+          window.location.href = href;
+        }
       }
     </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
   </body>
 </html>
