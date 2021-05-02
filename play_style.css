@@ -32,3 +32,8 @@ body {
   padding-left: 75px;
   text-align: left;;
 }
+
+.hangmanImage {
+  width: 60%;
+  height: auto;
+}

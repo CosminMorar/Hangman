@@ -60,7 +60,7 @@
         var place = document.getElementById('imageDisplayer');
         var mistakes = 11 - triesLeft;
         if (0 <= mistakes && mistakes <= 11) {
-          place.innerHTML = '<img src="Hangman Photos/Drawing (' + mistakes + ').png" alt="File not found">';
+          place.innerHTML = '<img src="Hangman Photos/Drawing (' + mistakes + ').png" class="hangmanImage" alt="File not found">';
         } else {
           place.innerHTML = '<h1>Invalid number of mistakes. Damn programmers! They always create bugs!</h1>';
         }
